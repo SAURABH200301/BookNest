@@ -70,6 +70,17 @@
 
 ---
 
+## Use Cases & Benefits
+  
+	  - Allows users to search,  and book hotels seamlessly.
+	  - Live pricing updates and filters improve user decision-making.
+	  - Helps hotel owners reach more customers without third-party intermediaries. 
+      - Improves the booking experience with features like favorites, history, and reviews.
+
+
+  
+
+---
 ## 📂 Project Structure (Planned)
 <details> <summary><strong>frontend/</strong></summary>
 
