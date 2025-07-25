@@ -1,70 +1,69 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { HotelInterface } from "../types/hotel";
-import FindHotel from "./FindHotel";
-import HotelCarousel from "./HotelCarousel";
 import Navbar from "./Navbar";
 import { getHotelData } from "../API/HotelData";
 import Loader from "./UI/Loader.component";
-import type { AppDispatch, RootState } from "../store";
-import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch } from "../store";
+import { useDispatch } from "react-redux";
 import { setAllHotels } from "../store/HotelStore/hotelSlice";
-import { useLoader } from "./UI/LoaderContext";
-import { HotelPaginationProvider } from "../helpers/SearchHotelPaginationContext";
+import { useLoader } from "./Context/LoaderContext";
+import { HotelPaginationProvider } from "./Context/SearchHotelPaginationContext";
+import { Box } from "@mui/material";
+import {
+  NotificationType,
+  useNotification,
+} from "./Context/NotificationContext";
+import NotificationComponent from "./UI/NotificationComponent";
+import HomePage from "./HomePage";
+import { SearchFormDataProvider } from "./Context/SearchFormContext";
 
 export default function Main() {
-  const [hotels, setHotels] = useState<HotelInterface[]>([]);
   const dispatch = useDispatch<AppDispatch>();
   const { showLoader, setLoader } = useLoader();
-  const allHotels: HotelInterface[] = useSelector(
-    (state: RootState) => state.hotel.AllHotels
-  );
 
-  const searchResults: HotelInterface[] = useSelector(
-    (state: RootState) => state.hotel.searchResults
-  );
+  const {
+    showNotification,
+    message,
+    type,
+    setMessage,
+    setShowNotification,
+    setType,
+    time,
+  } = useNotification();
 
   useEffect(() => {
     setLoader(true);
 
     const fetchHotels = async () => {
-      const listOFHotels: HotelInterface[] = await getHotelData();
-      setHotels(listOFHotels);
-      dispatch(setAllHotels(listOFHotels));
+      const response: { data: HotelInterface[] | null; error: any } =
+        await getHotelData();
+      if (response.data) {
+        dispatch(setAllHotels(response.data));
+      } else {
+        setShowNotification(true);
+        setMessage("Failed to fetch hotel pricing");
+        setType(NotificationType.ERROR);
+      }
       setLoader(false);
     };
 
     fetchHotels();
-  }, [dispatch, setLoader]);
-
-  useEffect(() => {
-    setHotels(allHotels);
-  }, [allHotels]);
-
-  useEffect(() => {
-    const preventScroll = (e: Event) => e.preventDefault();
-
-    if (showLoader) {
-      window.addEventListener("wheel", preventScroll, { passive: false });
-      window.addEventListener("touchmove", preventScroll, { passive: false });
-    } else {
-      window.removeEventListener("wheel", preventScroll);
-      window.removeEventListener("touchmove", preventScroll);
-    }
-
-    return () => {
-      window.removeEventListener("wheel", preventScroll);
-      window.removeEventListener("touchmove", preventScroll);
-    };
-  }, [showLoader]);
+  }, [dispatch, setLoader, setMessage, setShowNotification, setType]);
 
   return (
     <HotelPaginationProvider>
       {showLoader && <Loader showLoader={showLoader} />}
       <div>
-        <Navbar />
-        <FindHotel />
-        {!searchResults.length && <HotelCarousel hotels={hotels} />}
+        <Box sx={{ position: "sticky", top: 0, zIndex: 1000 }}>
+          <Navbar />
+        </Box>
+        <SearchFormDataProvider>
+          <HomePage />
+        </SearchFormDataProvider>
       </div>
+      {showNotification && (
+        <NotificationComponent message={message} type={type} time={time} />
+      )}
     </HotelPaginationProvider>
   );
 }

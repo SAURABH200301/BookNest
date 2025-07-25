@@ -32,6 +32,7 @@
   - **Favourite hotels**
   - **Last viewed / recently booked** hotels
 - Integrate a **dynamic pricing system** based on filters.
+- Create a **coupon System** .
 
 ### 🗄️ Backend Enhancements
 - Create API for **hotel comparison feature**.
@@ -42,6 +43,21 @@
   - User data
   - Hotel data
 - Implement a **demo pricing engine** to simulate real-time pricing.
+- Add coupon schema fpr coupon support
+```{
+  "code": "WELCOME100",
+  "discountType": "percentage",     // or "flat"
+  "value": 10,                      // 10% or $10 off
+  "maxDiscount": 500,              // for percentage cap
+  "minBookingAmount": 1000,
+  "startDate": "2025-07-01",
+  "endDate": "2025-08-01",
+  "usageLimit": 1000,
+  "usedBy": ["user123", "user456"],
+  "active": true
+}
+```
+
 
 ---
 

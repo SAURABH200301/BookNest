@@ -1,4 +1,4 @@
-import { Hotels } from "./sampleData.js";
+// import { Hotels } from "./sampleData.js";
 import hotelSchema from "./models/Hotels.js";
 
 const Favourite = [];
@@ -11,29 +11,29 @@ export async function getAllHotels() {
   }
 }
 
-export async function getHotelById(id) {
+export async function getHotelById(_id) {
 
   try {
-    const hotelByID = await hotelSchema.findOne({ id: Number(id) });
+    const hotelByID = await hotelSchema.findOne({ _id });
     return JSON.stringify(hotelByID);
   } catch (err) {
     return "Something went wrong";
   }
 }
 
-export function addHotelToFavorite(id) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const hotelByID = Hotels.find((hotel) => hotel.id === id);
-      if (hotelByID) {
-        Favourite.push(hotelByID);
-        resolve(true);
-        return;
-      }
-      reject(false);
-    }, 200);
-  });
-}
+// export function addHotelToFavorite(id) {
+//   return new Promise((resolve, reject) => {
+//     setTimeout(() => {
+//       const hotelByID = Hotels.find((hotel) => hotel.id === id);
+//       if (hotelByID) {
+//         Favourite.push(hotelByID);
+//         resolve(true);
+//         return;
+//       }
+//       reject(false);
+//     }, 200);
+//   });
+// }
 
 export function getFavorite() {
   return new Promise((resolve, reject) => {

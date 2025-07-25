@@ -15,11 +15,14 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { useNavigate } from "react-router-dom";
 
 import { AppDispatch } from "../../store";
 import { setHotelFavorite } from "../../store/HotelStore/hotelSlice";
 import AmentiesComponent from "./AmentiesComponent";
 import { getCurrencySymbol } from "../../helpers/Currency";
+import { useSearchFormData } from "../Context/SearchFormContext";
+import { NotificationType, useNotification } from "../Context/NotificationContext";
 
 interface CardProps {
   hotel: HotelInterface;
@@ -27,26 +30,43 @@ interface CardProps {
 export default function CustomCardHorizontal({ hotel }: CardProps) {
   const [favorite, setFavorite] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
-  const addToFavorite = async () => {
-    try {
-      let response;
-      if (!favorite) {
-        response = await addFavorite(hotel.id);
-      } else {
-        response = await removeFavorite(hotel.id);
-      }
-      console.log(response);
-      dispatch(setHotelFavorite({ id: hotel.id, favorite: !favorite }));
-      hotel.favorite = !hotel.favorite;
-      setFavorite(!favorite);
-    } catch (err) {}
-  };
+  const navigate = useNavigate();
+  const { checkIn, checkOut, guests, rooms } = useSearchFormData();
+  const { setShowNotification, setMessage, setType } = useNotification();
+
   useEffect(() => {
     setFavorite(hotel.favorite);
   }, [hotel]);
-  const descriptionLengthGr8 = (desc: string) => {
-    return desc.length > 80;
+
+  function redirectToHotelPage() {
+    navigate({
+      pathname: `/${hotel._id}`,
+      search: `?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&rooms=${rooms}`,
+    });
+  }
+
+  const addToFavorite = async () => {
+    let response: { data: string | null; error: any } = {
+      data: "",
+      error: null,
+    };
+    if (!favorite) {
+      response = await addFavorite(hotel.id);
+    } else {
+      response = await removeFavorite(hotel.id);
+    }
+    if (response.data !== null) {
+      dispatch(setHotelFavorite({ id: hotel.id, favorite: !favorite }));
+      setShowNotification(true);
+      setMessage(response.data);
+      setType(NotificationType.SUCCESS);
+    } else {
+      setShowNotification(true);
+      setMessage(response.error);
+      setType(NotificationType.ERROR);
+    }
   };
+
   return (
     <>
       <Card
@@ -55,6 +75,11 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
           mx: 5,
           my: 2,
           boxShadow: "3px 0px 3px 0px rgba(0, 0, 0, 0.2)",
+          backgroundColor: "#fff",
+          transition: "background-color 0.3s",
+          '&:hover': {
+            backgroundColor: '#fafdff ', 
+          },
         }}
       >
         <Grid container spacing={2} size={12} sx={{ width: "100%" }}>
@@ -110,7 +135,7 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
             sx={{
               mx: 1,
               p: 1,
-              height: "75%",
+              height: "fit-content",
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
@@ -137,10 +162,6 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
               <Box sx={{ py: 1, w: 100 }}>
                 <AmentiesComponent amenties={hotel.amenities} />
               </Box>
-              {/* <Typography variant="subtitle2">
-                {hotel.hotel_description.slice(0, 80)}
-                {descriptionLengthGr8(hotel.hotel_description) && " ..."}
-              </Typography> */}
             </Grid>
             <Grid size={{ xs: 12, sm: 12, md: 12 }}>
               <Box
@@ -167,11 +188,14 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
                       variant="caption"
                       sx={{ alignContent: "end", my: 0.5 }}
                     >
-                      Taxes Included
+                      Taxes Excluded
                     </Typography>
                   </Box>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Box
+                  sx={{ display: "flex", justifyContent: "space-between" }}
+                  onClick={redirectToHotelPage}
+                >
                   <Button variant="outlined">More Details</Button>
                   <Button
                     variant="contained"

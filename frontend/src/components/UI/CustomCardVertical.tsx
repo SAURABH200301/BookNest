@@ -21,25 +21,45 @@ import { HotelInterface } from "../../types/hotel";
 import { setHotelFavorite } from "../../store/HotelStore/hotelSlice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
+import { useNavigate } from "react-router-dom";
+import { useSearchFormData } from "../Context/SearchFormContext";
+import {
+  NotificationType,
+  useNotification,
+} from "../Context/NotificationContext";
 
 interface CardProps {
   hotel: HotelInterface;
 }
 export default function CustomCardVertical({ hotel }: CardProps) {
   const [favorite, setFavorite] = useState(false);
-  const dispatch= useDispatch<AppDispatch>()
-
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { checkIn, checkOut, guests, rooms } = useSearchFormData();
+  const { setShowNotification, setMessage, setType } = useNotification();
+  function redirectToHotelPage() {
+    navigate({
+      pathname: `/${hotel._id}`,
+      search: `?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}&rooms=${rooms}`,
+    });
+  }
   const addToFavorite = async () => {
-    try {
-      let response;
+      let response: { data: string | null; error: any } = { data: "", error: null };
       if (!favorite) {
         response = await addFavorite(hotel.id);
       } else {
         response = await removeFavorite(hotel.id);
       }
-      console.log("fav added", response);
-      dispatch(setHotelFavorite({ id: hotel.id, favorite: !favorite }));
-    } catch (err) {}
+      if (response.data !== null) {
+        dispatch(setHotelFavorite({ id: hotel.id, favorite: !favorite }));
+        setShowNotification(true);
+        setMessage(response.data);
+        setType(NotificationType.SUCCESS);
+      } else {
+        setShowNotification(true);
+        setMessage(response.error);
+        setType(NotificationType.ERROR);
+      }
   };
 
   useEffect(() => {
@@ -110,7 +130,12 @@ export default function CustomCardVertical({ hotel }: CardProps) {
               <ShareIcon />
             </IconButton>
           </Box>
-          <Button variant="outlined" color="inherit" aria-label="check-deal">
+          <Button
+            variant="outlined"
+            color="inherit"
+            aria-label="check-deal"
+            onClick={redirectToHotelPage}
+          >
             <CallMissedOutgoingIcon /> Check the Deal
           </Button>
         </Box>

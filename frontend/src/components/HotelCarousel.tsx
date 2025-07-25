@@ -8,6 +8,7 @@ interface HotelCarouselProps {
 }
 
 export default function HotelCarousel({ hotels }: HotelCarouselProps) {
+  
   return (
     <div className="hotelView">
       <Typography variant="h5" gutterBottom>
@@ -25,7 +26,7 @@ export default function HotelCarousel({ hotels }: HotelCarouselProps) {
                 size={{ sm: 12, md: 4, xs: 4, lg: 4 }}
                 className="card"
               >
-                <CustomCardVertical key={hotel.id} hotel={hotel} />
+                <CustomCardVertical key={hotel.id} hotel={hotel}/>
               </Grid>
             ))}
       </Grid>

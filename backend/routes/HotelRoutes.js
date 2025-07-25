@@ -3,11 +3,11 @@ import express from "express";
 import {
   getAllHotels,
   getHotelById,
-  addHotelToFavorite,
   getFavorite,
   searchHotels,
 } from "../promises.js";
 import { getUpdatePriceAsPerCustomerNeeds } from "../helpers/calculateCost.js";
+import { currentUpdateInfo } from "@temporalio/workflow";
 
 const router = express.Router();
 
@@ -51,6 +51,32 @@ router.get("/getFavorites", async (req, res) => {
     res.status(404).json(err);
   }
 });
+router.post("/:id/pricing", async (req, res) => {
+  try {
+    const params = req.params;
+    const hotelByID = await getHotelById(params.id);
+    if (!hotelByID) {
+      return res.status(404).json({ error: "Hotel not found" });
+    }
+    const payload = req.body;
+    const hotellist = [JSON.parse(hotelByID)];
+    const updatedHotel = await getUpdatePriceAsPerCustomerNeeds(
+      payload,
+      hotellist
+    );
+    const response = {
+      id: updatedHotel[0]._id,
+      name: updatedHotel[0].name,
+      totalCost: Number((updatedHotel[0].totalCost).toFixed(2)),
+      stayDuration: updatedHotel[0].stayDuration,
+      currency: updatedHotel[0].currency,
+    };
+    res.status(200).json(response);
+  } catch (err) {
+    console.log("Error encountered: ", err);
+    res.status(404).json(err);
+  }
+});
 
 router.post("/:id", async (req, res) => {
   try {
@@ -84,13 +110,11 @@ router.delete("/removeFavorites/:id", async (req, res) => {
   try {
     const params = req.params;
     favoruiteHotels = favoruiteHotels.filter((hotel) => hotel.id !== params.id);
-    console.log("favorites", favoruiteHotels);
-    res.status(200).json("Hotel Removed");
+    res.status(200).json(`Hotel removed from favorites`);
   } catch (err) {
     console.log("Error encountered: ", err);
     res.status(404).json(err);
   }
 });
-
 
 export default router;

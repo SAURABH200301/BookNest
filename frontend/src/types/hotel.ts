@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs";
 
 export interface SearchHotelPayload {
   hotelName: string;
@@ -41,3 +42,33 @@ export interface HotelInterface {
   totalCost?: number,
   stayDuration?: number
 }
+
+export interface HotelPricingInterface {
+  id: string;
+  checkIn: string | Dayjs;
+  checkOut: string | Dayjs;
+  guests: number;
+  rooms: number;
+}
+export const HotelPricingDefault: HotelPricingInterface = {
+  id: "",
+  checkIn: "",
+  checkOut: "",
+  guests: 0,
+  rooms: 0,
+};
+
+export interface HotelPricingResponse {
+  id: string,
+  name: string,
+  totalCost: number,
+  stayDuration: number,
+  currency: string
+}
+export const HotelPricingResponseDefault: HotelPricingResponse = {
+  id: "",
+  name: "",
+  totalCost: 0,
+  stayDuration: 0,
+  currency: ""
+};

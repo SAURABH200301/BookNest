@@ -9,7 +9,6 @@ import http from "http";
 import {
   getAllHotels,
   getHotelById,
-  addHotelToFavorite,
   getFavorite,
 } from "./promises.js";
 import UrlPattern from "url-pattern";

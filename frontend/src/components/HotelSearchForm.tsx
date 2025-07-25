@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Box, MenuItem, Typography, Collapse } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
@@ -6,26 +6,43 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-
 import "./HotelSearchForm.css";
 import { searchHotels } from "../API/HotelData";
 import { HotelInterface, SearchHotelPayload } from "../types/hotel";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../store";
 import { setSearchResults } from "../store/HotelStore/hotelSlice";
-import { useLoader } from "./UI/LoaderContext";
-import { useHotelPagination } from "../helpers/SearchHotelPaginationContext";
+import { useLoader } from "./Context/LoaderContext";
+import { useHotelPagination } from "./Context/SearchHotelPaginationContext";
+import { useSearchFormData } from "./Context/SearchFormContext";
+import {
+  NotificationType,
+  useNotification,
+} from "./Context/NotificationContext";
+import { useSearchParams } from "react-router-dom";
 
 export default function HotelSearchForm() {
-  const [cityHotelName, setCityHotelName] = useState<string>("");
-  const [checkIn, setCheckIn] = useState<Dayjs | null>(dayjs());
-  const [checkOut, setCheckOut] = useState<Dayjs | null>(dayjs().add(1, "day"));
-  const [guests, setGuests] = useState<number>(1);
-  const [rooms, setRooms] = useState<number>(1);
   const dispatch = useDispatch<AppDispatch>();
   const { setLoader } = useLoader();
   const { pagination, setTotalItems, setLoadMore, setPagination } =
     useHotelPagination();
+
+  const [searchParams] = useSearchParams();
+
+  const {
+    checkIn,
+    setCheckIn,
+    checkOut,
+    setCheckOut,
+    guests,
+    setGuests,
+    rooms,
+    setRooms,
+    cityHotelName,
+    setCityHotelName,
+  } = useSearchFormData();
+  const { setShowNotification, setMessage, setType, setTime } =
+    useNotification();
 
   const searchResults: HotelInterface[] = useSelector(
     (state: RootState) => state.hotel.searchResults
@@ -34,8 +51,8 @@ export default function HotelSearchForm() {
   useEffect(() => {
     if (cityHotelName.length === 0) {
       dispatch(setSearchResults([]));
-      setPagination({ startIndex: 0, endIndex: 5 });
       setLoadMore(false);
+      setPagination({ startIndex: 0, endIndex: 5 });
     }
   }, [cityHotelName, dispatch, setLoadMore, setPagination]);
 
@@ -55,26 +72,62 @@ export default function HotelSearchForm() {
 
   async function searchAPI(searchHotelPayload: SearchHotelPayload) {
     setLoader(true);
-    try {
-      const response = await searchHotels(searchHotelPayload);
-      setTotalItems(response.totalItems);
+    const response = await searchHotels(searchHotelPayload);
+    if (response.data) {
+      const responseData = response.data;
+      setTotalItems(responseData.totalItems);
       const data =
-        response.startIndex === 0
-          ? response.data
-          : [...searchResults, ...response.data];
+        responseData.startIndex === 0
+          ? responseData.data
+          : [...searchResults, ...responseData.data];
       dispatch(setSearchResults(data));
+      setShowNotification(true);
+      setMessage(
+        `Found ${responseData.totalItems} hotels, top ${responseData.endIndex} hotels displaying`
+      );
+      setType(NotificationType.SUCCESS);
       setLoader(false);
-    } catch (err) {
+    } else {
       setLoader(false);
-      console.log("error", err);
+      dispatch(setSearchResults([]));
+      setShowNotification(true);
+      setMessage(response.error?.message);
+      setTime(5000);
+      setType(NotificationType.ERROR);
     }
   }
+
+  useEffect(() => {
+    if (searchParams.toString() !== "") {
+      const hotelName = searchParams.get("hotelName") || "";
+      const checkInDate = searchParams.get("checkIn") || "";
+      const checkOutDate = searchParams.get("checkOut") || "";
+      const guestsCount = searchParams.get("guests") || "1";
+      const roomsCount = searchParams.get("rooms") || "1";
+      setCityHotelName(hotelName);
+      setCheckIn(checkInDate ? dayjs(checkInDate) : (null as unknown as Dayjs));
+      setCheckOut(
+        checkOutDate ? dayjs(checkOutDate) : (null as unknown as Dayjs)
+      );
+      setGuests(Number(guestsCount));
+      setRooms(Number(roomsCount));
+    }
+  }, [
+    searchParams,
+    setCheckIn,
+    setCheckOut,
+    setCityHotelName,
+    setGuests,
+    setRooms,
+  ]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Box
         sx={{
-          p: 3,
+          px: 3,
+          pt: 2,
+          pb: 3,
           borderRadius: 2,
           boxShadow: 3,
           backgroundColor: "white",
@@ -103,10 +156,7 @@ export default function HotelSearchForm() {
             />
           </Grid>
           <Grid size={{ md: cityHotelName ? 9 : 12 }}>
-            <Collapse
-              in={Boolean(cityHotelName)}
-              timeout={600}
-            >
+            <Collapse in={Boolean(cityHotelName)} timeout={600}>
               <Grid container spacing={2}>
                 <Grid
                   size={{
@@ -118,7 +168,7 @@ export default function HotelSearchForm() {
                   <DatePicker
                     label="Check-in Date"
                     value={checkIn}
-                    onChange={(newValue) => setCheckIn(newValue)}
+                    onChange={(newValue) => setCheckIn(newValue || checkIn)}
                     slotProps={{
                       textField: { fullWidth: true, size: "small" },
                     }}
@@ -136,7 +186,7 @@ export default function HotelSearchForm() {
                     label="Check-out Date"
                     value={checkOut}
                     minDate={checkIn ?? undefined}
-                    onChange={(newValue) => setCheckOut(newValue)}
+                    onChange={(newValue) => setCheckOut(newValue || checkOut)}
                     slotProps={{
                       textField: { fullWidth: true, size: "small" },
                     }}

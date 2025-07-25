@@ -73,7 +73,7 @@ export default function Navbar() {
               textDecoration: "none",
             }}
           >
-            HotelWise
+            BookNest
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -122,7 +122,7 @@ export default function Navbar() {
               textDecoration: "none",
             }}
           >
-            HotelWise
+            BookNest
           </Typography>
 
           {/* Desktop Menu */}

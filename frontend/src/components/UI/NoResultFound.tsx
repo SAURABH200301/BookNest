@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import noResultFound from "../assests/no-results.png"
+import noResultFound from "../../../public/assests/no-results.png"
 
 export default function NoResultFound() {
   return (
