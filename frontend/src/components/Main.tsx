@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { HotelInterface } from "../types/hotel";
 import Navbar from "./Navbar";
 import { getHotelData } from "../API/HotelData";
@@ -16,11 +16,12 @@ import {
 import NotificationComponent from "./UI/NotificationComponent";
 import HomePage from "./HomePage";
 import { SearchFormDataProvider } from "./Context/SearchFormContext";
+import UserSignInPage from "./User/UserSignInPage";
 
 export default function Main() {
   const dispatch = useDispatch<AppDispatch>();
   const { showLoader, setLoader } = useLoader();
-
+  const [openSignInModal, setOpenSignInModal] = useState<boolean>(false);
   const {
     showNotification,
     message,
@@ -55,12 +56,18 @@ export default function Main() {
       {showLoader && <Loader showLoader={showLoader} />}
       <div>
         <Box sx={{ position: "sticky", top: 0, zIndex: 1000 }}>
-          <Navbar />
+          <Navbar  setOpenSignInModal={setOpenSignInModal} />
         </Box>
         <SearchFormDataProvider>
           <HomePage />
         </SearchFormDataProvider>
       </div>
+      {openSignInModal && (
+        <UserSignInPage
+          openModal={true}
+          onClose={(value) => setOpenSignInModal(value)}
+        />
+      )}
       {showNotification && (
         <NotificationComponent message={message} type={type} time={time} />
       )}

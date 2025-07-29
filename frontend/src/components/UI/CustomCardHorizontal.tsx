@@ -22,7 +22,10 @@ import { setHotelFavorite } from "../../store/HotelStore/hotelSlice";
 import AmentiesComponent from "./AmentiesComponent";
 import { getCurrencySymbol } from "../../helpers/Currency";
 import { useSearchFormData } from "../Context/SearchFormContext";
-import { NotificationType, useNotification } from "../Context/NotificationContext";
+import {
+  NotificationType,
+  useNotification,
+} from "../Context/NotificationContext";
 
 interface CardProps {
   hotel: HotelInterface;
@@ -77,8 +80,8 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
           boxShadow: "3px 0px 3px 0px rgba(0, 0, 0, 0.2)",
           backgroundColor: "#fff",
           transition: "background-color 0.3s",
-          '&:hover': {
-            backgroundColor: '#fafdff ', 
+          "&:hover": {
+            backgroundColor: "#fafdff ",
           },
         }}
       >
@@ -192,14 +195,25 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
                     </Typography>
                   </Box>
                 </Box>
-                <Box
-                  sx={{ display: "flex", justifyContent: "space-between" }}
-                  onClick={redirectToHotelPage}
-                >
-                  <Button variant="outlined">More Details</Button>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Button
+                    variant="outlined"
+                    onClick={redirectToHotelPage}
+                    sx={{ color: "#60442D", borderColor: "#60442D" }}
+                  >
+                    More Details
+                  </Button>
                   <Button
                     variant="contained"
-                    sx={{ alignItems: "center", justifyItems: "center" }}
+                    sx={{
+                      backgroundColor: "#60442D",
+                      color: "white",
+                      alignItems: "center",
+                      justifyItems: "center",
+                      "&:hover": {
+                        backgroundColor: "#503621",
+                      },
+                    }}
                   >
                     <span>Book Now</span>{" "}
                     <ArrowForwardIosIcon fontSize="small" />

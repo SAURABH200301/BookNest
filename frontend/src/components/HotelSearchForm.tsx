@@ -153,6 +153,25 @@ export default function HotelSearchForm() {
               placeholder="Where to?"
               size="small"
               onChange={(e) => setCityHotelName(e.target.value)}
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  "& fieldset": {
+                    borderColor: "#60442D",
+                  },
+                  "&:hover fieldset": {
+                    borderColor: "#60442D",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#60442D",
+                  },
+                },
+                "& .MuiInputLabel-root": {
+                  color: "#60442D",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#60442D",
+                },
+              }}
             />
           </Grid>
           <Grid size={{ md: cityHotelName ? 9 : 12 }}>
@@ -169,8 +188,31 @@ export default function HotelSearchForm() {
                     label="Check-in Date"
                     value={checkIn}
                     onChange={(newValue) => setCheckIn(newValue || checkIn)}
+                    className="mui-fields"
                     slotProps={{
-                      textField: { fullWidth: true, size: "small" },
+                      textField: {
+                        fullWidth: true,
+                        size: "small",
+                        sx: {
+                          "& .MuiOutlinedInput-root": {
+                            "& fieldset": {
+                              borderColor: "#60442D",
+                            },
+                            "&:hover fieldset": {
+                              borderColor: "#60442D",
+                            },
+                            "&.Mui-focused fieldset": {
+                              borderColor: "#60442D",
+                            },
+                          },
+                          "& .MuiInputLabel-root": {
+                            color: "#60442D",
+                          },
+                          "& .MuiInputLabel-root.Mui-focused": {
+                            color: "#60442D",
+                          },
+                        },
+                      },
                     }}
                   />
                 </Grid>
