@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { addFavorite, removeFavorite } from "../../API/HotelData";
+import { addRemoveFavorite } from "../../API/HotelData";
 import { HotelInterface } from "../../types/hotel";
 import {
   Box,
@@ -11,13 +11,14 @@ import {
   IconButton,
   Rating,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { useNavigate } from "react-router-dom";
 
-import { AppDispatch } from "../../store";
+import { AppDispatch, RootState } from "../../store";
 import { setHotelFavorite } from "../../store/HotelStore/hotelSlice";
 import AmentiesComponent from "./AmentiesComponent";
 import { getCurrencySymbol } from "../../helpers/Currency";
@@ -26,6 +27,8 @@ import {
   NotificationType,
   useNotification,
 } from "../Context/NotificationContext";
+import { useAuth } from "../Context/AuthContext";
+import { useSelector } from "react-redux";
 
 interface CardProps {
   hotel: HotelInterface;
@@ -36,10 +39,24 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
   const navigate = useNavigate();
   const { checkIn, checkOut, guests, rooms } = useSearchFormData();
   const { setShowNotification, setMessage, setType } = useNotification();
+  const { isAuthenticated } = useAuth();
+
+  const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
-    setFavorite(hotel.favorite);
-  }, [hotel]);
+    const hotelId = hotel?.id;
+    const listOfLikedHotels = user?.favorite_hotels || [];
+
+    if (!hotelId) {
+      setFavorite(false);
+      return;
+    }
+
+    const isFavorite = listOfLikedHotels.some(
+      (userHotelId) => userHotelId.toString() === hotelId.toString()
+    );
+    setFavorite(isFavorite);
+  }, [hotel?.id, user?.favorite_hotels]);
 
   function redirectToHotelPage() {
     navigate({
@@ -53,11 +70,8 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
       data: "",
       error: null,
     };
-    if (!favorite) {
-      response = await addFavorite(hotel.id);
-    } else {
-      response = await removeFavorite(hotel.id);
-    }
+    response = await addRemoveFavorite(hotel.id, !favorite);
+
     if (response.data !== null) {
       dispatch(setHotelFavorite({ id: hotel.id, favorite: !favorite }));
       setShowNotification(true);
@@ -109,28 +123,40 @@ export default function CustomCardHorizontal({ hotel }: CardProps) {
                 }}
               />
 
-              <IconButton
-                aria-label="add to favorites"
-                onClick={addToFavorite}
-                sx={{
-                  position: "absolute",
-                  top: 8,
-                  right: 8,
-                  backgroundColor: "rgba(255, 255, 255, 0.7)",
-                  "&:hover": {
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                  },
-                }}
+              <Tooltip
+                title="Sign in to add this to your favorites"
+                disableHoverListener={isAuthenticated}
               >
-                <FavoriteIcon
-                  sx={{
-                    color: favorite ? "#e91e63" : "#9e9e9e",
-                    "&:hover": {
-                      color: "#e91e63",
-                    },
+                <span
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    display: "inline-block",
                   }}
-                />
-              </IconButton>
+                >
+                  <IconButton
+                    aria-label="add to favorites"
+                    onClick={addToFavorite}
+                    disabled={!isAuthenticated}
+                    sx={{
+                      backgroundColor: "rgba(255, 255, 255, 0.7)",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                      },
+                    }}
+                  >
+                    <FavoriteIcon
+                      sx={{
+                        color: favorite ? "#e91e63" : "#9e9e9e",
+                        "&:hover": {
+                          color: "#e91e63",
+                        },
+                      }}
+                    />
+                  </IconButton>
+                </span>
+              </Tooltip>
             </Box>
           </Grid>
           <Grid

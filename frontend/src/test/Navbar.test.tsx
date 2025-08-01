@@ -12,13 +12,13 @@ describe('Navbar Component', () => {
   });
 
   test('renders Favorites menu item', () => {
-    render(<Navbar setOpenSignInModal={mockSetOpenSignInModal} />);
+    render(<Navbar  />);
     const favoriteElement = screen.getAllByText(/favorites/i)[0]; // it appears twice (desktop/mobile)
     expect(favoriteElement).toBeInTheDocument();
   });
 
   test('renders user settings in menu when avatar is clicked', async () => {
-    render(<Navbar setOpenSignInModal={mockSetOpenSignInModal} />);
+    render(<Navbar  />);
 
     const avatarButton = screen.getByRole('button', { name: /open settings/i });
     expect(avatarButton).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('Navbar Component', () => {
   });
 
   test('calls setOpenSignInModal when SignIn setting is clicked', async () => {
-    render(<Navbar setOpenSignInModal={mockSetOpenSignInModal} />);
+    render(<Navbar  />);
 
     const avatarButton = screen.getByRole('button', { name: /open settings/i });
     await act(async () => {
@@ -52,7 +52,7 @@ describe('Navbar Component', () => {
   });
 
   test('opens and closes navigation menu on mobile icon button click', async () => {
-    render(<Navbar setOpenSignInModal={mockSetOpenSignInModal} />);
+    render(<Navbar  />);
 
     // The navigation menu icon button is labeled 'menu' (aria-label)
     const menuButton = screen.getByLabelText(/menu/i);

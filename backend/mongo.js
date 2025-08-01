@@ -1,20 +1,20 @@
 /* eslint-disable no-undef */
-const mongoose = require('mongoose');
-const dotenv= require('dotenv');
+import { connect } from "mongoose";
+import { config } from "dotenv";
 
-dotenv.config();
+config();
 
-const MONGOURI=process.env.MONGO_URI
+const MONGOURI = process.env.MONGO_URI;
 const connectToDatabase = async () => {
   try {
-    await mongoose.connect(MONGOURI, {
+    await connect(MONGOURI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     });
-    console.log('Connected to MongoDB ');
+    console.log("Connected to MongoDB ");
   } catch (error) {
-    console.error('Error connecting to MongoDB :', error);
+    console.error("Error connecting to MongoDB :", error);
   }
 };
 
-module.exports = connectToDatabase;
+export default connectToDatabase;

@@ -23,19 +23,22 @@
 	margin: 0 10px;
 	animation: 2s bounce ease infinite;
 }
-.blue {
-  background-color: #4285f5;
+.brown1 {
+  background-color: #60442D; 
 }
-.red {
-  background-color: #4682A9;
+
+.brown2 {
+  background-color: #7b5737; 
   animation-delay: 0.25s;
 }
-.yellow {
-  background-color: #749BC2;
+
+.brown3 {
+  background-color: #9e6b3c; 
   animation-delay: 0.5s;
 }
-.green {
-  background-color: #91C8E4;
+
+.brown4 {
+  background-color: #c68f61; 
   animation-delay: 0.75s;
 }
 

@@ -138,12 +138,12 @@ export default function HotelSearchForm() {
         <Typography variant="subtitle1" mb={2}>
           Find what's next?
         </Typography>
-        <Grid container spacing={2} className="gridBox">
+        <Grid container spacing={2}>
           <Grid
             size={{
               xs: 12,
               sm: 12,
-              md: cityHotelName ? 3 : 12,
+              md: cityHotelName ? 4 : 12,
             }}
           >
             <TextField
@@ -174,7 +174,15 @@ export default function HotelSearchForm() {
               }}
             />
           </Grid>
-          <Grid size={{ md: cityHotelName ? 9 : 12 }}>
+          <Grid
+            size={{ md: cityHotelName ? 8 : 12 }}
+            sx={{
+              minWidth: {
+                xs: "100%",
+                md: "60%",
+              },
+            }}
+          >
             <Collapse in={Boolean(cityHotelName)} timeout={600}>
               <Grid container spacing={2}>
                 <Grid

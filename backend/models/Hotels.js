@@ -1,12 +1,12 @@
 /* eslint-disable no-undef */
-const mongoose = require("mongoose");
+import { Schema, model } from "mongoose";
 
-const distanceSchema = new mongoose.Schema({
+const distanceSchema = new Schema({
     name: { type: String, required: true },
     distance: { type: Number, required: true },
 });
 
-const hotelSchema = new mongoose.Schema({
+const hotelSchema = new Schema({
     id: { type: Number, required: true, unique: true },
     hotelName: { type: String, required: true },
     city: { type: String, required: true },
@@ -28,4 +28,4 @@ const hotelSchema = new mongoose.Schema({
     distance_from: { type: [distanceSchema], required: true },
 });
 
-module.exports = mongoose.model("hotels", hotelSchema);
+export default model("hotels", hotelSchema);

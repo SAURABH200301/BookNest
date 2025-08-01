@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from "@mui/material";
-import loadingImage1 from "../assests/landing-photo.jpg";
-import loadingImage2 from "../assests/landing-photo-2.jpg";
+import loadingImage1 from "../assests/landing-photo-1.png";
+import loadingImage2 from "../assests/landing-photo-2.png";
 import loadingImage3 from "../assests/landing-photo-3.jpg";
 import FindHotel from "./FindHotel";
 import { useSearchFormData } from "./Context/SearchFormContext";

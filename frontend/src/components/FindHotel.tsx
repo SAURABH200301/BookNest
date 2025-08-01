@@ -34,7 +34,7 @@ export default function FindHotel() {
                 },
               }}
             >
-              <KeyboardDoubleArrowDownIcon fontSize="large" />
+              <KeyboardDoubleArrowDownIcon fontSize="large" sx={{color:'#60442D'}} />
             </Box>
           </Button>
         </Box>

@@ -11,10 +11,10 @@ export default function Loader({ showLoader }: { showLoader: boolean }) {
       {loader && (
         <div className="container">
           <div className="wrapper">
-            <div className="blue ball"></div>
-            <div className="red ball"></div>
-            <div className="yellow ball"></div>
-            <div className="green ball"></div>
+            <div className="brown1 ball"></div>
+            <div className="brown2 ball"></div>
+            <div className="brown3 ball"></div>
+            <div className="brown4 ball"></div>
           </div>
         </div>
       )}

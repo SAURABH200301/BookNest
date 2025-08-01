@@ -1,19 +1,23 @@
-import express from "express";
-const app = express();
+/* eslint-disable no-undef */
+import express, { json } from "express";
 import cors from "cors";
 import HotelRoutes from './routes/HotelRoutes.js';
-import dotenv from "dotenv";
-dotenv.config();
-
-import http from "http";
-import {
-  getAllHotels,
-  getHotelById,
-  getFavorite,
-} from "./promises.js";
-import UrlPattern from "url-pattern";
-import url from "url";
+import AuthRoutes from './routes/AuthRoutes.js';
+import UserRoutes from './routes/UserRoutes.js';
+import { config } from "dotenv";
 import connectToDatabase from "./mongo.js";
+
+const app = express();
+config();
+
+// import http from "http";
+// import {
+//   getAllHotels,
+//   getHotelById,
+//   getFavorite,
+// } from "./promises.js";
+// import UrlPattern from "url-pattern";
+// import url from "url";
 
 //NODE
 // const server = http.createServer(async (req, res) => {
@@ -86,12 +90,14 @@ import connectToDatabase from "./mongo.js";
 
 //EXPRESS
 app.use(cors());
-app.use(express.json());
+app.use(json());
 connectToDatabase()
 
 const port = process.env.PORT || 80 
 
 app.use("/api/hotel", HotelRoutes);
+app.use("/api/auth", AuthRoutes);
+app.use("/api/user", UserRoutes);
 
 app.listen(port, () => {
   console.log("express app listening at 3333");

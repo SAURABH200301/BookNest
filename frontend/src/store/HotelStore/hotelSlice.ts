@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import getInitlialState from '../state';
+import {getInitlialHotelState} from '../state';
 import { setSearchResultsHandler, clearSearchResultsHandler, setHotelsHandler, setHotelFavoriteHandler } from './HotelReducer';
 
 
 const hotelSlice = createSlice({
   name: 'hotel',
-  initialState: getInitlialState(),
+  initialState: getInitlialHotelState(),
   reducers: {
     setSearchResults: setSearchResultsHandler,
     clearSearchResults: clearSearchResultsHandler,
